@@ -1,0 +1,1 @@
+g++ main.cpp html5server.cpp session.cpp  -lssl -l crypto -l boost_system -std=c++11 -o server
