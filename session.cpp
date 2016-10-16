@@ -28,59 +28,54 @@ namespace websocket {
 
             void session::start()
             {
-                socket_.async_handshake(boost::asio::ssl::stream_base::server,
-                    boost::bind(&session::handle_handshake, shared_from_this(),
-                      boost::asio::placeholders::error));    
+                    wssocket_.next_layer().async_handshake(
+        boost::asio::ssl::stream_base::server, strand_.wrap(
+            boost::bind(&session::handle_handshake, shared_from_this(),
+                boost::asio::placeholders::error)));
+                
+              //  socket_.async_handshake(boost::asio::ssl::stream_base::server,
+                //    boost::bind(&session::handle_handshake, shared_from_this(),
+                  //    boost::asio::placeholders::error));    
             }
  
             void session::handle_handshake(const boost::system::error_code& error)
             {
                 if (!error)
                 {
-                    do_read_header();
+                   wssocket_.async_accept(strand_.wrap(
+                        boost::bind(&session::http_do_read, shared_from_this(),
+                        boost::asio::placeholders::error)));
+                 
                 }
                 else
                 {
+                    std::cout<<error.message()<<std::endl;
                 }
             }
         
             void session::do_read_header()
             {
-            
-                 boost::asio::async_read_until(socket_, buff_, "\r\n\r\n",
-                    boost::bind(&session::http_handle_read,shared_from_this(),
-                        boost::asio::placeholders::error));
+                
                
             }
             
-            void session::http_handle_read(const boost::system::error_code& error)
-            {
-                if (!error)
-                {
-                            
-                             wssocket_.async_accept(buff_.data(),
-                                strand_.wrap(
-                                boost::bind(&session::http_do_read, shared_from_this(),
-                                boost::asio::placeholders::error)));
-                }
-            }
             
             void session::http_do_read(const boost::system::error_code& error)
             {
                 std::cout<<"Inside http_do-read, checking wsssocket_.accept result" <<std::endl;
                 if (!error)
                 {
-                //  wssocket_.write(response_);
-               // std::cout<<"Accepted HTTP connection, should write to it"<<std::endl;
-                //buff_.consume(buff_.size());
-               // wssocket_.read(op_,buff_);
-              //  std::cout<<"After wssocket_.read"<<std::endl;
-              //  wssocket_.set_option(beast::websocket::message_type{op_});
-                //  ws.write(buff.data());
-                //  buff_.consum(buff.size());
+                    std::cout<<"Accepted HTTP connection, should write to it"<<std::endl;
+               //     buff_.consume(buff_.size());
+            //        wssocket_.read(op_,buff_);
+             //       std::cout<<"After wssocket_.read"<<std::endl;
+           //         wssocket_.set_option(beast::websocket::message_type{op_});
+                //    wssocket_.write("asdfdf");
+                //    buff_.consum(buff_.size());
                 } else
                 {
                     std::cout<<error.message()<<std::endl;
+                    
                 }
             }
             
