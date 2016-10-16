@@ -20,7 +20,7 @@
 #include <cstdlib>
 #include <deque>
 #include <iostream>
-#include <list>
+#include <list> 
 #include <set>
 #include <utility>
 #include <cppconn/driver.h>
@@ -57,6 +57,8 @@ namespace websocket {
 
             void do_read_header();
             void handle_handshake(const boost::system::error_code& error);
+            void http_do_read(const boost::system::error_code& error);
+
 
             boost::asio::io_service::strand strand_;            
             beast::http::request_v1<beast::http::string_body> request_;
