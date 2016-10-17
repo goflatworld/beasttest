@@ -64,7 +64,7 @@ namespace websocket {
                     wssocket_.async_write(
                         //buff_.data(),       //Works if I send it back directly
                        // boost::asio::buffer("Hello World!"),  //Works if I directly put string in here.
-                       boost::asio::buffer(msg);   //Doesn't work using string var
+                       boost::asio::buffer(msg),   //Doesn't work using string var
                         strand_.wrap(boost::bind(&session::http_do_read, shared_from_this(),
                         boost::asio::placeholders::error))); 
                     
